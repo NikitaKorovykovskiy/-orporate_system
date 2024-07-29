@@ -1,0 +1,4 @@
+postgres*/
+.dockerignore
+*venv/
+.git
