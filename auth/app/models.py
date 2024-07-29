@@ -1,36 +1,20 @@
-from pydantic import BaseModel
-from typing import Optional
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+from .database import Base
 
-class UserBase(BaseModel):
-    username: str
-    email: str
-    role: str
+class User(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    is_active = Column(Boolean, default=True)
+    role = Column(String, nullable=False)  # "admin", "director", "manager", "user"
 
-class UserCreate(UserBase):
-    password: str
-
-class UserUpdate(UserBase):
-    password: Optional[str] = None
-    is_active: Optional[bool] = None
-
-class UserInDB(UserBase):
-    id: int
-    is_active: bool
-
-    class Config:
-        orm_mode = True
-
-
-class TokenBase(BaseModel):
-    access_token: str
-    refresh_token: str
-
-class TokenCreate(TokenBase):
-    user_id: int
-
-class TokenInDB(TokenBase):
-    id: int
-    user_id: int
-
-    class Config:
-        orm_mode = True
+class Token(Base):
+    __tablename__ = 'tokens'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    access_token = Column(String, nullable=False)
+    refresh_token = Column(String, nullable=False)
+    user = relationship('User')
