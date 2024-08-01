@@ -12,6 +12,9 @@ fastapi = "^0.111.1"
 uvicorn = {extras = ["standard"], version = "^0.30.3"}
 sqlalchemy = "^2.0.31"
 psycopg2-binary = "^2.9.9"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+alembic = "^1.13.2"
 
 
 [build-system]
