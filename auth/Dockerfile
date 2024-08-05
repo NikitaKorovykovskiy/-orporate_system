@@ -15,15 +15,17 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 # Добавляем Poetry в PATH
 ENV PATH="/root/.local/bin:$PATH"
 
+# Создаем рабочую директорию
 WORKDIR /app
 
+# Копируем файлы конфигурации Poetry
 COPY pyproject.toml poetry.lock* /app/
 
+# Устанавливаем зависимости с Poetry
 RUN poetry install --no-dev
 
+# Копируем оставшиеся файлы проекта
 COPY . /app
 
-EXPOSE 8000
-
-# ENTRYPOINT ["poetry", "run", "alembic", "upgrade", "head"]
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Выполняем миграции и запускаем приложение
+ENTRYPOINT ["sh", "-c", "poetry run alembic upgrade head && poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
